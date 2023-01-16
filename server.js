@@ -25,6 +25,8 @@ app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
+const readFile = util.promisify(fs.readFile)
+
 // The following API routes should be created:
 
 // TODO: `GET /api/notes` should read the `db.json` file and return all saved notes as JSON.
@@ -54,7 +56,22 @@ app.post('/api/notes', (req, res) => {
         note_id: uuidv4(),
       };
 
-      readAndAppend(newNote, './db/notes.json');
+      fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+        if(err) {
+          console.log(err);
+        } else {
+          const notes = JSON.parse(data);
+          notes.push(newNote);
+
+          fs.writeFile('./db/db.json', JSON.stringify(notes, null, '\t'), (err) => 
+          err
+          ? console.error(err)
+          : console.log(
+            'Notes for ${newNote.title} has been written to JSON file'
+          )
+          );
+        }
+      })
 
       const response = {
         status: 'success',
