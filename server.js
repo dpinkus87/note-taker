@@ -3,6 +3,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const util = require('util');
 const fs = require('fs');
+const { response } = require('express');
 
 const PORT = process.env.PORT || 3001;
 
@@ -22,13 +23,18 @@ app.get('/notes', (req, res) =>
 
 const readFromFile = util.promisify(fs.readFile);
 
+// app.delete('./api/notes/:id', (req, res) => 
+//   {
+//     return console.log("Delete Entry");  
+//     res.status(200).json(response)
+//   },
+
+
 // COMPLETED: `GET /notes` should return the `notes.html` file.
 
 app.get('/api/notes', (req, res) => {
   readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
-});
-
-
+}),
 
 
 // The following API routes should be created:
@@ -79,13 +85,13 @@ app.post('/api/notes', (req, res) => {
     } else {
       res.status(500).json('Error in posting note');
     }
-  });
+  }),
 
   app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
-);
+),
 
   //-------//
 app.listen(PORT, () =>
   console.log(`Express server listening on port ${PORT}!`)
-);
+)
